@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Clash Converter</title>
+    <title>Crypto Clash Conversion</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -19,9 +19,11 @@
             overflow-x: hidden;
         }
         h1 {
-            font-size: 3rem;
+            width: 500px;
+            max-width: 100%;
+            font-size: 2.2rem;
             text-align: center;
-            margin: 20px 0;
+            margin: 20px auto;
             background: linear-gradient(90deg, #ff6f61, #decaff);
             -webkit-background-clip: text;
             color: transparent;
@@ -33,7 +35,8 @@
             40% { transform: translate(2px, -2px); }
         }
         #crypto-converter-widget {
-            width: 350px;
+            width: 500px;
+            max-width: 100%;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border-radius: 15px;
@@ -84,9 +87,9 @@
             text-align: center;
         }
         #narrative {
-            width: 80%;
-            max-width: 600px;
-            margin: 30px auto;
+            width: 500px;
+            max-width: 100%;
+            margin: 20px auto;
             padding: 20px;
             background: rgba(255, 255, 255, 0.05);
             border-radius: 10px;
@@ -98,7 +101,7 @@
     </style>
 </head>
 <body>
-    <h1>Crypto Clash Converter</h1>
+    <h1>Crypto Clash Conversion</h1>
     <div id="crypto-converter-widget">
         <select id="from-coin"></select>
         <select id="to-coin"></select>
@@ -106,7 +109,7 @@
         <button id="convert-btn">Smash the Conversion</button>
         <div id="result"></div>
     </div>
-    <div id="narrative">Pick your coins, and watch the chaos unfold...</div>
+    <div id="narrative">Pick your coins for a savage punchline...</div>
 
     <script>
         class CryptoConverter {
@@ -173,7 +176,7 @@
 
                 if (fromId === toId) {
                     this.resultDiv.textContent = `${amount} ${this.coins[fromId].name} is... ${amount} ${this.coins[toId].name}. Duh!`;
-                    this.narrativeDiv.textContent = `${this.coins[fromId].name} stares into the void, realizing it’s just itself. Existential crisis hits the dorm at 3 AM.`;
+                    this.narrativeDiv.textContent = `Why’d ${this.coins[fromId].name} ghost itself? Too busy HODLing its own hype!`;
                     return;
                 }
 
@@ -196,43 +199,48 @@
                     const convertedAmount = amount * rate;
 
                     this.resultDiv.textContent = `${amount} ${this.coins[fromId].name} = ${convertedAmount.toFixed(6)} ${this.coins[toId].name}`;
-                    this.generateNarrative(fromId, toId, amount, convertedAmount);
+                    this.generateJoke(fromId, toId);
                 } catch (error) {
                     this.resultDiv.textContent = 'Price fetch failed—blame the blockchain gremlins!';
                     console.error('Error fetching prices:', error.message);
                 }
             }
 
-            generateNarrative(fromId, toId, amount, convertedAmount) {
+            generateJoke(fromId, toId) {
                 const fromCoin = this.coins[fromId].name;
                 const toCoin = this.coins[toId].name;
-                const fromSym = this.coins[fromId].symbol;
-                const toSym = this.coins[toId].symbol;
 
-                const narratives = [
-                    () => `In a dorm-room heist, ${fromCoin}—the ${amount}-strong legend born in 2009—hacks the mainframe, only to morph into ${convertedAmount.toFixed(2)} ${toCoin}. Turns out, ${toCoin}’s gas fees bribed the RA with Ethereum’s smart contracts!`,
-                    () => `${fromCoin}, with ${amount} ${fromSym} stashed in a pizza box, gets ambushed by ${toCoin}’s meme army. After a viral TikTok showdown, it’s ${convertedAmount.toFixed(2)} ${toSym}—proof Dogecoin’s 2013 chaos still slaps harder than syllabus week!`,
-                    () => `${amount} ${fromCoin} floats through the metaverse, a cosmic king from the Satoshi era, until ${toCoin}—Solana’s speed-demon freshman—rewrites the blockchain. Now it’s ${convertedAmount.toFixed(2)} ${toCoin}, racing past Ethereum’s gas station!`,
-                    () => `Picture this: ${fromCoin} (${amount} ${fromSym}) leads a cult of HODLers in the library basement, chanting about 21 million coins. ${toCoin} crashes the ritual with ${convertedAmount.toFixed(2)} ${toSym}, yelling “SHIB’s here to rug-pull your vibes!”`,
-                    () => `${fromCoin}, wielding ${amount} ${fromSym} like a caffeine-fueled senior thesis, battles ${toCoin} in a glitchy VR rave. ${toCoin} drops ${convertedAmount.toFixed(2)} ${toSym}, screaming “I’m Cardano’s proof-of-stake now—catch me staking your lunch money!”`,
-                    () => `${amount} ${fromCoin} hijacks the campus Wi-Fi, mining since the dawn of crypto, but ${toCoin}—born from a Binance tweet—flips it into ${convertedAmount.toFixed(2)} ${toSym}. The dean’s now broke, and BNB’s buying ramen for all!`,
-                    () => `${fromCoin} (${amount} ${fromSym}), the grizzled prof of blockchain 101, gets quantum-entangled with ${toCoin}. After a wormhole trip, it’s ${convertedAmount.toFixed(2)} ${toSym}—XRP’s settling lawsuits faster than you can say “midterms!”`,
-                ];
+                const fromJokes = {
+                    'bitcoin': `Why’d ${fromCoin} dump ${toCoin}? It’s too volatile to settle down—Satoshi’s rollercoaster never stops!`,
+                    'ethereum': `Why’d ${fromCoin} ditch ${toCoin}? Gas fees so high it’d rather fund Vitalik’s haircut!`,
+                    'dogecoin': `Why’d ${fromCoin} yeet ${toCoin}? Elon’s tweets turned it into a meme missile—much wow, no chill!`,
+                    'binance-coin': `Why’d ${fromCoin} burn ${toCoin}? CZ’s empire doesn’t share the spotlight—BNB’s the real kingpin!`,
+                    'solana': `Why’d ${fromCoin} ghost ${toCoin}? It’s too fast to care—Solana’s already on Mars while ${toCoin}’s buffering!`,
+                    'cardano': `Why’d ${fromCoin} shade ${toCoin}? It’s too busy staking its ego—Cardano’s the blockchain hipster nobody asked for!`,
+                    'xrp': `Why’d ${fromCoin} sue ${toCoin}? XRP’s lawyers needed a new yacht—settlement’s faster than your Wi-Fi!`,
+                    'shiba-inu': `Why’d ${fromCoin} rug-pull ${toCoin}? SHIB’s too busy chasing Doge’s tail to play nice!`,
+                    'chainlink': `Why’d ${fromCoin} oracle ${toCoin} out? Chainlink’s predictions said ${toCoin}’s future’s a 404 error!`,
+                    'uniswap': `Why’d ${fromCoin} swap ${toCoin}? Uniswap’s liquidity pool drowned ${toCoin} in DeFi tears!`,
+                    default: `Why’d ${fromCoin} flex on ${toCoin}? It’s got more hype than a TikTok crypto scam—${toCoin}’s just the sidekick!`
+                };
 
-                // Special cases for specific coins
-                let story;
-                if (fromCoin === 'Bitcoin') {
-                    story = `${fromCoin}, the 2009 dropout with ${amount} BTC, lectures ${toCoin} on scarcity. But ${toCoin} yeets back with ${convertedAmount.toFixed(2)} ${toSym}, proving infinite forks beat one king—sorry, Satoshi!`;
-                } else if (fromCoin === 'Ethereum') {
-                    story = `${fromCoin}, coding ${amount} ETH smart contracts in the lab, gets DDoSed by ${toCoin}’s layer-2 crew. Now it’s ${convertedAmount.toFixed(2)} ${toSym}—Vitalik’s crying into his ramen while ${toCoin} scales the frat house!`;
-                } else if (fromCoin === 'Dogecoin') {
-                    story = `${fromCoin}, the 2013 meme dropout with ${amount} DOGE, moonwalks into ${toCoin}’s NFT party. Elon tweets, and bam—${convertedAmount.toFixed(2)} ${toSym}. Much wow, such chaos, very college!`;
-                } else {
-                    const randomIndex = Math.floor(Math.random() * narratives.length);
-                    story = narratives[randomIndex]();
-                }
+                const toJokes = {
+                    'bitcoin': `Why’d ${fromCoin} fear ${toCoin}? Bitcoin’s halving party crashed ${fromCoin}’s hype train!`,
+                    'ethereum': `Why’d ${fromCoin} flop to ${toCoin}? Ethereum’s merge roasted ${fromCoin}’s gas-guzzling ass!`,
+                    'dogecoin': `Why’d ${fromCoin} bow to ${toCoin}? Doge’s meme army barked ${fromCoin} into submission—woof woof, loser!`,
+                    'binance-coin': `Why’d ${fromCoin} kneel to ${toCoin}? BNB’s burn rate torched ${fromCoin}’s dreams—CZ’s laughing in billions!`,
+                    'solana': `Why’d ${fromCoin} lag ${toCoin}? Solana’s speed left ${fromCoin} choking on dial-up dust!`,
+                    'cardano': `Why’d ${fromCoin} envy ${toCoin}? Cardano’s staking game made ${fromCoin}’s HODL look like a nap!`,
+                    'xrp': `Why’d ${fromCoin} lose to ${toCoin}? XRP’s lawsuit squad fined ${fromCoin} into next week!`,
+                    'shiba-inu': `Why’d ${fromCoin} trip over ${toCoin}? SHIB’s meme hype buried ${fromCoin} in a doghouse of regret!`,
+                    'chainlink': `Why’d ${fromCoin} crash into ${toCoin}? Chainlink’s oracles predicted ${fromCoin}’s doom—data don’t lie!`,
+                    'uniswap': `Why’d ${fromCoin} sink to ${toCoin}? Uniswap’s swap fees drained ${fromCoin} drier than a desert wallet!`,
+                    default: `Why’d ${fromCoin} flop to ${toCoin}? ${toCoin}’s got more edge than a crypto bro’s Lambo—${fromCoin}’s toast!`
+                };
 
-                this.narrativeDiv.textContent = story;
+                const fromJoke = fromJokes[fromId] || fromJokes.default;
+                const toJoke = toJokes[toId] || toJokes.default;
+                this.narrativeDiv.textContent = `${fromJoke} ${toJoke}`;
             }
         }
 
