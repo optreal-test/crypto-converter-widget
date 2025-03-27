@@ -159,24 +159,29 @@
                 this.toSelect.appendChild(fragment);
             }
 
-            getHistoricalDate() {
+            getHistoricalTimestamps() {
                 const today = new Date();
                 const oneYearAgo = new Date(today);
                 oneYearAgo.setFullYear(today.getFullYear() - 1);
-                const day = String(oneYearAgo.getDate()).padStart(2, '0');
-                const month = String(oneYearAgo.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-                const year = oneYearAgo.getFullYear();
-                return `${day}-${month}-${year}`;
+                
+                // Start of the day one year ago (00:00:00)
+                const start = new Date(oneYearAgo.setHours(0, 0, 0, 0)).getTime();
+                // End of the day one year ago (23:59:59)
+                const end = new Date(oneYearAgo.setHours(23, 59, 59, 999)).getTime();
+                
+                return { start, end };
             }
 
-            async getHistoricalPrice(coinId, date) {
+            async getHistoricalPrice(coinId) {
+                const { start, end } = this.getHistoricalTimestamps();
                 try {
                     const response = await fetch(
-                        `https://api.coingecko.com/api/v3/coins/${coinId}/history?date=${date}&localization=false`
+                        `https://api.coincap.io/v2/assets/${coinId}/history?interval=d1&start=${start}&end=${end}`
                     );
                     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                     const data = await response.json();
-                    return data.market_data?.current_price?.usd || null;
+                    // Take the first (and likely only) data point for that day
+                    return data.data[0]?.priceUsd ? parseFloat(data.data[0].priceUsd) : null;
                 } catch (error) {
                     console.error(`Error fetching historical price for ${coinId}:`, error.message);
                     return null;
@@ -187,7 +192,6 @@
                 const fromId = this.fromSelect.value;
                 const toId = this.toSelect.value;
                 const amount = parseFloat(this.amountInput.value);
-                const historicalDate = this.getHistoricalDate();
 
                 if (!fromId || !toId) {
                     this.resultDiv.textContent = 'Yo, pick both coins first!';
@@ -200,7 +204,7 @@
                 }
 
                 try {
-                    // Current price conversion
+                    // Fetch current prices
                     const response = await fetch(`https://api.coincap.io/v2/assets?ids=${fromId},${toId}`);
                     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                     const data = await response.json();
@@ -220,9 +224,9 @@
 
                     this.resultDiv.textContent = `${amount} ${this.coins[fromId].name} = ${convertedAmount.toFixed(6)} ${this.coins[toId].name}`;
 
-                    // Historical price narrative with current prices
-                    const fromHistoricalPrice = await this.getHistoricalPrice(fromId, historicalDate);
-                    const toHistoricalPrice = await this.getHistoricalPrice(toId, historicalDate);
+                    // Fetch historical prices
+                    const fromHistoricalPrice = await this.getHistoricalPrice(fromId);
+                    const toHistoricalPrice = await this.getHistoricalPrice(toId);
 
                     let narrative = '';
                     if (fromHistoricalPrice && toHistoricalPrice) {
