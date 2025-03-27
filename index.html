@@ -56,14 +56,26 @@
             }
 
             async init() {
-                await this.fetchCoins();
+                await this.loadCoins();
                 this.populateSelects();
                 this.convertBtn.addEventListener('click', this.convert.bind(this));
             }
 
-            async fetchCoins() {
+            async loadCoins() {
+                // Check localStorage for cached data
+                const cachedCoins = localStorage.getItem('cryptoCoins');
+                const cacheTime = localStorage.getItem('cryptoCoinsTime');
+                const now = Date.now();
+                const oneHour = 60 * 60 * 1000; // 1 hour in milliseconds
+
+                if (cachedCoins && cacheTime && (now - cacheTime < oneHour)) {
+                    this.coins = JSON.parse(cachedCoins);
+                    return;
+                }
+
                 try {
                     const response = await fetch('https://api.coingecko.com/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false');
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                     const data = await response.json();
                     data.forEach(coin => {
                         this.coins[coin.id] = {
@@ -71,6 +83,9 @@
                             symbol: coin.symbol.toUpperCase()
                         };
                     });
+                    // Cache the data
+                    localStorage.setItem('cryptoCoins', JSON.stringify(this.coins));
+                    localStorage.setItem('cryptoCoinsTime', now);
                 } catch (error) {
                     this.resultDiv.textContent = 'Failed to load coin list. Please try again later.';
                     console.error('Error fetching coins:', error);
@@ -111,6 +126,7 @@
 
                 try {
                     const response = await fetch(`https://api.coingecko.com/v3/simple/price?ids=${fromId},${toId}&vs_currencies=usd`);
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                     const prices = await response.json();
 
                     if (!prices[fromId] || !prices[toId]) {
@@ -130,7 +146,6 @@
             }
         }
 
-        // Initialize the widget
         new CryptoConverter();
     </script>
 </body>
