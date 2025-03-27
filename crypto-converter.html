@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Conversion Widget</title>
+    <style>
+        #crypto-converter-widget {
+            width: 300px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-family: Arial, sans-serif;
+        }
+        select, input, button {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="crypto-converter-widget">
+        <select id="from-coin"></select>
+        <select id="to-coin"></select>
+        <input type="number" id="amount" placeholder="Enter amount" min="0" step="any">
+        <button id="convert-btn">Convert</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        class CryptoConverter {
+            constructor() {
+                this.fromSelect = document.getElementById('from-coin');
+                this.toSelect = document.getElementById('to-coin');
+                this.amountInput = document.getElementById('amount');
+                this.convertBtn = document.getElementById('convert-btn');
+                this.resultDiv = document.getElementById('result');
+                this.coins = {};
+                this.init();
+            }
+
+            async init() {
+                await this.fetchCoins();
+                this.populateSelects();
+                this.convertBtn.addEventListener('click', this.convert.bind(this));
+            }
+
+            async fetchCoins() {
+                try {
+                    const response = await fetch('https://api.coingecko.com/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=false');
+                    const data = await response.json();
+                    data.forEach(coin => {
+                        this.coins[coin.id] = {
+                            name: coin.name,
+                            symbol: coin.symbol.toUpperCase()
+                        };
+                    });
+                } catch (error) {
+                    this.resultDiv.textContent = 'Failed to load coin list. Please try again later.';
+                    console.error('Error fetching coins:', error);
+                }
+            }
+
+            populateSelects() {
+                const fragment = document.createDocumentFragment();
+                for (const [id, coin] of Object.entries(this.coins)) {
+                    const option = document.createElement('option');
+                    option.value = id;
+                    option.textContent = `${coin.name} (${coin.symbol})`;
+                    fragment.appendChild(option);
+                }
+                this.fromSelect.appendChild(fragment.cloneNode(true));
+                this.toSelect.appendChild(fragment);
+            }
+
+            async convert() {
+                const fromId = this.fromSelect.value;
+                const toId = this.toSelect.value;
+                const amount = parseFloat(this.amountInput.value);
+
+                if (!fromId || !toId) {
+                    this.resultDiv.textContent = 'Please select both coins.';
+                    return;
+                }
+
+                if (isNaN(amount) || amount <= 0) {
+                    this.resultDiv.textContent = 'Please enter a valid positive number for the amount.';
+                    return;
+                }
+
+                if (fromId === toId) {
+                    this.resultDiv.textContent = `1 ${this.coins[fromId].name} is equal to 1 ${this.coins[toId].name}. So, ${amount} ${this.coins[fromId].name} is equal to ${amount} ${this.coins[toId].name}.`;
+                    return;
+                }
+
+                try {
+                    const response = await fetch(`https://api.coingecko.com/v3/simple/price?ids=${fromId},${toId}&vs_currencies=usd`);
+                    const prices = await response.json();
+
+                    if (!prices[fromId] || !prices[toId]) {
+                        throw new Error('Price data unavailable');
+                    }
+
+                    const fromPrice = prices[fromId].usd;
+                    const toPrice = prices[toId].usd;
+                    const rate = fromPrice / toPrice;
+                    const convertedAmount = amount * rate;
+
+                    this.resultDiv.textContent = `${amount} ${this.coins[fromId].name} is equal to ${convertedAmount.toFixed(6)} ${this.coins[toId].name}`;
+                } catch (error) {
+                    this.resultDiv.textContent = 'Failed to get current prices for selected coins. Please try again later.';
+                    console.error('Error fetching prices:', error);
+                }
+            }
+        }
+
+        // Initialize the widget
+        new CryptoConverter();
+    </script>
+</body>
+</html>
