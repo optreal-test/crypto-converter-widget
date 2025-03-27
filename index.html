@@ -3,45 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Conversion Widget (CoinCap)</title>
+    <title>Crypto Clash Converter</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        #crypto-converter-widget {
-            width: 300px;
-            margin: 20px auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-family: Arial, sans-serif;
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1e1e2f, #3a1e5f);
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
         }
-        select, input, button {
+        h1 {
+            font-size: 3rem;
+            text-align: center;
+            margin: 20px 0;
+            background: linear-gradient(90deg, #ff6f61, #decaff);
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: glitch 2s infinite;
+        }
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(2px, -2px); }
+        }
+        #crypto-converter-widget {
+            width: 350px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+            margin: 20px auto;
+            transition: transform 0.3s;
+        }
+        #crypto-converter-widget:hover {
+            transform: scale(1.05);
+        }
+        select, input {
             width: 100%;
-            padding: 8px;
-            margin: 5px 0;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            background: #2a2a3d;
+            color: #fff;
+            font-size: 1rem;
             box-sizing: border-box;
+            transition: box-shadow 0.3s;
+        }
+        select:focus, input:focus {
+            outline: none;
+            box-shadow: 0 0 10px #ff6f61;
         }
         button {
-            background-color: #4CAF50;
-            color: white;
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(90deg, #ff6f61, #decaff);
             border: none;
+            border-radius: 8px;
+            color: #1e1e2f;
+            font-size: 1.1rem;
+            font-weight: bold;
             cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
         button:hover {
-            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 111, 97, 0.5);
         }
         #result {
-            margin-top: 10px;
-            font-weight: bold;
+            margin-top: 15px;
+            font-size: 1.1rem;
+            color: #decaff;
+            text-align: center;
+        }
+        #narrative {
+            width: 80%;
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #e0e0e0;
+            text-align: center;
         }
     </style>
 </head>
 <body>
+    <h1>Crypto Clash Converter</h1>
     <div id="crypto-converter-widget">
         <select id="from-coin"></select>
         <select id="to-coin"></select>
-        <input type="number" id="amount" placeholder="Enter amount" min="0" step="any">
-        <button id="convert-btn">Convert</button>
+        <input type="number" id="amount" placeholder="How much tho?" min="0" step="any">
+        <button id="convert-btn">Smash the Conversion</button>
         <div id="result"></div>
     </div>
+    <div id="narrative">Pick your coins, and watch the chaos unfold...</div>
 
     <script>
         class CryptoConverter {
@@ -51,6 +116,7 @@
                 this.amountInput = document.getElementById('amount');
                 this.convertBtn = document.getElementById('convert-btn');
                 this.resultDiv = document.getElementById('result');
+                this.narrativeDiv = document.getElementById('narrative');
                 this.coins = {};
                 this.init();
             }
@@ -64,9 +130,7 @@
             async fetchCoins() {
                 try {
                     const response = await fetch('https://api.coincap.io/v2/assets?limit=100');
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                     const data = await response.json();
                     data.data.forEach(coin => {
                         this.coins[coin.id] = {
@@ -75,7 +139,7 @@
                         };
                     });
                 } catch (error) {
-                    this.resultDiv.textContent = 'Failed to load coin list. Please try again later.';
+                    this.resultDiv.textContent = 'Whoops, coin list crashed! Try again?';
                     console.error('Error fetching coins:', error.message);
                 }
             }
@@ -98,25 +162,24 @@
                 const amount = parseFloat(this.amountInput.value);
 
                 if (!fromId || !toId) {
-                    this.resultDiv.textContent = 'Please select both coins.';
+                    this.resultDiv.textContent = 'Yo, pick both coins first!';
                     return;
                 }
 
                 if (isNaN(amount) || amount <= 0) {
-                    this.resultDiv.textContent = 'Please enter a valid positive number for the amount.';
+                    this.resultDiv.textContent = 'Gimme a real number, fam!';
                     return;
                 }
 
                 if (fromId === toId) {
-                    this.resultDiv.textContent = `1 ${this.coins[fromId].name} is equal to 1 ${this.coins[toId].name}. So, ${amount} ${this.coins[fromId].name} is equal to ${amount} ${this.coins[toId].name}.`;
+                    this.resultDiv.textContent = `${amount} ${this.coins[fromId].name} is... ${amount} ${this.coins[toId].name}. Duh!`;
+                    this.narrativeDiv.textContent = `${this.coins[fromId].name} stares into the void, realizing it’s just itself. Existential crisis hits the dorm at 3 AM.`;
                     return;
                 }
 
                 try {
                     const response = await fetch(`https://api.coincap.io/v2/assets?ids=${fromId},${toId}`);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
                     const data = await response.json();
                     const prices = {};
                     data.data.forEach(coin => {
@@ -124,7 +187,7 @@
                     });
 
                     if (!prices[fromId] || !prices[toId]) {
-                        throw new Error('Price data unavailable');
+                        throw new Error('Price data went poof!');
                     }
 
                     const fromPrice = prices[fromId];
@@ -132,11 +195,44 @@
                     const rate = fromPrice / toPrice;
                     const convertedAmount = amount * rate;
 
-                    this.resultDiv.textContent = `${amount} ${this.coins[fromId].name} is equal to ${convertedAmount.toFixed(6)} ${this.coins[toId].name}`;
+                    this.resultDiv.textContent = `${amount} ${this.coins[fromId].name} = ${convertedAmount.toFixed(6)} ${this.coins[toId].name}`;
+                    this.generateNarrative(fromId, toId, amount, convertedAmount);
                 } catch (error) {
-                    this.resultDiv.textContent = 'Failed to get current prices for selected coins. Please try again later.';
+                    this.resultDiv.textContent = 'Price fetch failed—blame the blockchain gremlins!';
                     console.error('Error fetching prices:', error.message);
                 }
+            }
+
+            generateNarrative(fromId, toId, amount, convertedAmount) {
+                const fromCoin = this.coins[fromId].name;
+                const toCoin = this.coins[toId].name;
+                const fromSym = this.coins[fromId].symbol;
+                const toSym = this.coins[toId].symbol;
+
+                const narratives = [
+                    () => `In a dorm-room heist, ${fromCoin}—the ${amount}-strong legend born in 2009—hacks the mainframe, only to morph into ${convertedAmount.toFixed(2)} ${toCoin}. Turns out, ${toCoin}’s gas fees bribed the RA with Ethereum’s smart contracts!`,
+                    () => `${fromCoin}, with ${amount} ${fromSym} stashed in a pizza box, gets ambushed by ${toCoin}’s meme army. After a viral TikTok showdown, it’s ${convertedAmount.toFixed(2)} ${toSym}—proof Dogecoin’s 2013 chaos still slaps harder than syllabus week!`,
+                    () => `${amount} ${fromCoin} floats through the metaverse, a cosmic king from the Satoshi era, until ${toCoin}—Solana’s speed-demon freshman—rewrites the blockchain. Now it’s ${convertedAmount.toFixed(2)} ${toCoin}, racing past Ethereum’s gas station!`,
+                    () => `Picture this: ${fromCoin} (${amount} ${fromSym}) leads a cult of HODLers in the library basement, chanting about 21 million coins. ${toCoin} crashes the ritual with ${convertedAmount.toFixed(2)} ${toSym}, yelling “SHIB’s here to rug-pull your vibes!”`,
+                    () => `${fromCoin}, wielding ${amount} ${fromSym} like a caffeine-fueled senior thesis, battles ${toCoin} in a glitchy VR rave. ${toCoin} drops ${convertedAmount.toFixed(2)} ${toSym}, screaming “I’m Cardano’s proof-of-stake now—catch me staking your lunch money!”`,
+                    () => `${amount} ${fromCoin} hijacks the campus Wi-Fi, mining since the dawn of crypto, but ${toCoin}—born from a Binance tweet—flips it into ${convertedAmount.toFixed(2)} ${toSym}. The dean’s now broke, and BNB’s buying ramen for all!`,
+                    () => `${fromCoin} (${amount} ${fromSym}), the grizzled prof of blockchain 101, gets quantum-entangled with ${toCoin}. After a wormhole trip, it’s ${convertedAmount.toFixed(2)} ${toSym}—XRP’s settling lawsuits faster than you can say “midterms!”`,
+                ];
+
+                // Special cases for specific coins
+                let story;
+                if (fromCoin === 'Bitcoin') {
+                    story = `${fromCoin}, the 2009 dropout with ${amount} BTC, lectures ${toCoin} on scarcity. But ${toCoin} yeets back with ${convertedAmount.toFixed(2)} ${toSym}, proving infinite forks beat one king—sorry, Satoshi!`;
+                } else if (fromCoin === 'Ethereum') {
+                    story = `${fromCoin}, coding ${amount} ETH smart contracts in the lab, gets DDoSed by ${toCoin}’s layer-2 crew. Now it’s ${convertedAmount.toFixed(2)} ${toSym}—Vitalik’s crying into his ramen while ${toCoin} scales the frat house!`;
+                } else if (fromCoin === 'Dogecoin') {
+                    story = `${fromCoin}, the 2013 meme dropout with ${amount} DOGE, moonwalks into ${toCoin}’s NFT party. Elon tweets, and bam—${convertedAmount.toFixed(2)} ${toSym}. Much wow, such chaos, very college!`;
+                } else {
+                    const randomIndex = Math.floor(Math.random() * narratives.length);
+                    story = narratives[randomIndex]();
+                }
+
+                this.narrativeDiv.textContent = story;
             }
         }
 
