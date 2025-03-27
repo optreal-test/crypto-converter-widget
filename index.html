@@ -220,27 +220,32 @@
 
                     this.resultDiv.textContent = `${amount} ${this.coins[fromId].name} = ${convertedAmount.toFixed(6)} ${this.coins[toId].name}`;
 
-                    // Historical price narrative
+                    // Historical price narrative with current prices
                     const fromHistoricalPrice = await this.getHistoricalPrice(fromId, historicalDate);
                     const toHistoricalPrice = await this.getHistoricalPrice(toId, historicalDate);
 
                     let narrative = '';
                     if (fromHistoricalPrice && toHistoricalPrice) {
                         narrative = `One year ago, ${this.coins[fromId].name} was $${fromHistoricalPrice.toFixed(2)} USD ` +
-                                  `and ${this.coins[toId].name} was $${toHistoricalPrice.toFixed(2)} USD. `;
+                                  `and ${this.coins[toId].name} was $${toHistoricalPrice.toFixed(2)} USD. ` +
+                                  `Today ${this.coins[fromId].name} is $${fromPrice.toFixed(2)} USD ` +
+                                  `and ${this.coins[toId].name} is $${toPrice.toFixed(2)} USD. `;
                         const fromChange = ((fromPrice - fromHistoricalPrice) / fromHistoricalPrice * 100).toFixed(2);
                         const toChange = ((toPrice - toHistoricalPrice) / toHistoricalPrice * 100).toFixed(2);
                         narrative += `${this.coins[fromId].name} ${fromChange > 0 ? 'gained' : 'lost'} ${Math.abs(fromChange)}% ` +
                                    `while ${this.coins[toId].name} ${toChange > 0 ? 'gained' : 'lost'} ${Math.abs(toChange)}%!`;
                     } else if (fromHistoricalPrice) {
                         narrative = `One year ago, ${this.coins[fromId].name} was $${fromHistoricalPrice.toFixed(2)} USD. ` +
+                                  `Today ${this.coins[fromId].name} is $${fromPrice.toFixed(2)} USD. ` +
                                   `${this.coins[toId].name} was too shy to show its price back then!`;
                     } else if (toHistoricalPrice) {
                         narrative = `One year ago, ${this.coins[toId].name} was $${toHistoricalPrice.toFixed(2)} USD. ` +
+                                  `Today ${this.coins[toId].name} is $${toPrice.toFixed(2)} USD. ` +
                                   `${this.coins[fromId].name} was playing hide and seek with its price!`;
                     } else {
                         narrative = `Neither ${this.coins[fromId].name} nor ${this.coins[toId].name} wanted to ` +
-                                  `spill their USD values from a year ago!`;
+                                  `spill their USD values from a year ago! Today ${this.coins[fromId].name} is $${fromPrice.toFixed(2)} USD ` +
+                                  `and ${this.coins[toId].name} is $${toPrice.toFixed(2)} USD.`;
                     }
 
                     this.narrativeDiv.textContent = narrative;
