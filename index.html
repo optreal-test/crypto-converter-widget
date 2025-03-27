@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Clash Conversion</title>
+    <title>Crypto Converter Widget</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -101,7 +101,7 @@
     </style>
 </head>
 <body>
-    <h1>Crypto Clash Conversion</h1>
+    <h1>Crypto Converter Widget</h1>
     <div id="crypto-converter-widget">
         <select id="from-coin"></select>
         <select id="to-coin"></select>
@@ -204,43 +204,6 @@
                     this.resultDiv.textContent = 'Price fetch failed—blame the blockchain gremlins!';
                     console.error('Error fetching prices:', error.message);
                 }
-            }
-
-            generateJoke(fromId, toId) {
-                const fromCoin = this.coins[fromId].name;
-                const toCoin = this.coins[toId].name;
-
-                const fromJokes = {
-                    'bitcoin': `Why’d ${fromCoin} dump ${toCoin}? It’s too volatile to settle down—Satoshi’s rollercoaster never stops!`,
-                    'ethereum': `Why’d ${fromCoin} ditch ${toCoin}? Gas fees so high it’d rather fund Vitalik’s haircut!`,
-                    'dogecoin': `Why’d ${fromCoin} yeet ${toCoin}? Elon’s tweets turned it into a meme missile—much wow, no chill!`,
-                    'binance-coin': `Why’d ${fromCoin} burn ${toCoin}? CZ’s empire doesn’t share the spotlight—BNB’s the real kingpin!`,
-                    'solana': `Why’d ${fromCoin} ghost ${toCoin}? It’s too fast to care—Solana’s already on Mars while ${toCoin}’s buffering!`,
-                    'cardano': `Why’d ${fromCoin} shade ${toCoin}? It’s too busy staking its ego—Cardano’s the blockchain hipster nobody asked for!`,
-                    'xrp': `Why’d ${fromCoin} sue ${toCoin}? XRP’s lawyers needed a new yacht—settlement’s faster than your Wi-Fi!`,
-                    'shiba-inu': `Why’d ${fromCoin} rug-pull ${toCoin}? SHIB’s too busy chasing Doge’s tail to play nice!`,
-                    'chainlink': `Why’d ${fromCoin} oracle ${toCoin} out? Chainlink’s predictions said ${toCoin}’s future’s a 404 error!`,
-                    'uniswap': `Why’d ${fromCoin} swap ${toCoin}? Uniswap’s liquidity pool drowned ${toCoin} in DeFi tears!`,
-                    default: `Why’d ${fromCoin} flex on ${toCoin}? It’s got more hype than a TikTok crypto scam—${toCoin}’s just the sidekick!`
-                };
-
-                const toJokes = {
-                    'bitcoin': `Why’d ${fromCoin} fear ${toCoin}? Bitcoin’s halving party crashed ${fromCoin}’s hype train!`,
-                    'ethereum': `Why’d ${fromCoin} flop to ${toCoin}? Ethereum’s merge roasted ${fromCoin}’s gas-guzzling ass!`,
-                    'dogecoin': `Why’d ${fromCoin} bow to ${toCoin}? Doge’s meme army barked ${fromCoin} into submission—woof woof, loser!`,
-                    'binance-coin': `Why’d ${fromCoin} kneel to ${toCoin}? BNB’s burn rate torched ${fromCoin}’s dreams—CZ’s laughing in billions!`,
-                    'solana': `Why’d ${fromCoin} lag ${toCoin}? Solana’s speed left ${fromCoin} choking on dial-up dust!`,
-                    'cardano': `Why’d ${fromCoin} envy ${toCoin}? Cardano’s staking game made ${fromCoin}’s HODL look like a nap!`,
-                    'xrp': `Why’d ${fromCoin} lose to ${toCoin}? XRP’s lawsuit squad fined ${fromCoin} into next week!`,
-                    'shiba-inu': `Why’d ${fromCoin} trip over ${toCoin}? SHIB’s meme hype buried ${fromCoin} in a doghouse of regret!`,
-                    'chainlink': `Why’d ${fromCoin} crash into ${toCoin}? Chainlink’s oracles predicted ${fromCoin}’s doom—data don’t lie!`,
-                    'uniswap': `Why’d ${fromCoin} sink to ${toCoin}? Uniswap’s swap fees drained ${fromCoin} drier than a desert wallet!`,
-                    default: `Why’d ${fromCoin} flop to ${toCoin}? ${toCoin}’s got more edge than a crypto bro’s Lambo—${fromCoin}’s toast!`
-                };
-
-                const fromJoke = fromJokes[fromId] || fromJokes.default;
-                const toJoke = toJokes[toId] || toJokes.default;
-                this.narrativeDiv.textContent = `${fromJoke} ${toJoke}`;
             }
         }
 
